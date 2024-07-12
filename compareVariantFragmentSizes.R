@@ -75,7 +75,6 @@ if (nrow(mutations) == 0) {
 	}
 
 # initiate list to hold variant sizes
-fragment.sizes <- list();
 metrics.data <- list();
 
 # loop over each variant
