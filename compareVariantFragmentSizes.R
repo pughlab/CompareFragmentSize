@@ -102,7 +102,7 @@ for (idx in 1:nrow(mutations)) {
 		);
 
 	plotFragmentSizes(
-		fragment.data = target.reads
+		fragment.data = target.reads,
 		id = arguments$sample,
 		target = metrics.data[[idx]]
 		);
