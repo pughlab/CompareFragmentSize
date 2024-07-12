@@ -25,5 +25,11 @@ Target variants can be input in either MAF or TSV format. MAF format must contai
 ## RUN example
 The included compareVariantFragmentSizes.R can be used to run all target variants for a single sample:
 ```
-Rscript compareVariantFragmentSizes.R -b /path/to/sample.bam -o /path/to/output/directory -s SMID1 -t /path/to/targets.maf -r hg38
+Rscript compareVariantFragmentSizes.R -b /path/to/sample.bam -o /path/to/output/directory -s Sample1 -t /path/to/targets.maf -r hg38
 ```
+
+| Sample | Hugo_Symbol | Chromosome | Start | End | Variant_Type | REF | ALT | HGVSc | N.Ref | Median.Ref | N.Alt | Median.Alt | p | VAF | Classification |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Sample1 | FANCD2 | chr3 | 10088239 | 10088239 | SNP | G | A | c.1135-25G>A | 2260 | 167 | 372 | 164 | 8x10^-8 | 0.14 | somatic |
+
+<img src="inst/extdata/fragment_sizes_chr3_10088239_G_A.png" width=40% height=40%>
