@@ -48,6 +48,9 @@ collectMetrics <- function(fragment.data, target, verbose = TRUE) {
 
 	output.data <- target[1,];
 	output.data[,c('Count_WT','Count_VAR','Median_WT','Median_VAR','VAF','KS.p','Classification')] <- NA;
+	if ('FS' %in% colnames(GenomicRanges::mcols(fragments))) {
+		output.data[,c('WTFS','VFS','ttest.p')] <- NA;
+		}
 
 	# summarize fragment sizes
 	if (length(ref.fragments) > 0) {
