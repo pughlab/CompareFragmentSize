@@ -4,10 +4,11 @@
 # 	as REF or ALT, performs summary statisitcs for each variant and outputs visualizations.
 
 # Example:
-# Rscript compareVariantFragmentSizes.R -b /path/to/sample.bam -o /path/to/output/directory -s Sample1 -t /path/to/targets.maf -r hg38
+# Rscript compareVariantFragmentSizes.R -b /path/to/sample.bam -o /path/to/output/directory -s Sample1 -t /path/to/targets.maf -g hg38
 
 ### PREPARE SESSION ################################################################################
 # import libraries
+library(CompareFragmentSize);
 library(argparse);
 
 # import command line arguments
@@ -18,7 +19,9 @@ parser$add_argument('-o', '--output_dir', type = 'character', help = 'path to ou
 parser$add_argument('-s', '--sample', type = 'character', default = NULL,
 	help = "sample ID (should match value in 'Sample' or 'Tumor_Sample_Barcode' fields of 'targets')");
 parser$add_argument('-t', '--targets', type = 'character', help = 'path to target regions');
-parser$add_argument('-r', '--ref_type', type = 'character', help = 'reference genome (hg38 or hg19)',
+parser$add_argument('-r', '--ref', type = 'character', help = 'fragment-length reference (Vessies et al.)',
+	default = system.file('extdata', 'vessies_reference_set.txt', package = 'CompareFragmentSize'));
+parser$add_argument('-g', '--genome', type = 'character', help = 'reference genome (hg38 or hg19)',
 	default = 'hg38');
 
 arguments <- parser$parse_args();
@@ -42,8 +45,12 @@ if (is.null(arguments$sample)) {
 
 ignore.insertions <- FALSE;
 if (!arguments$ref_type %in% c('hg19','hg38')) {
-	warning("Argument --ref_type must be one of 'hg19' or 'hg38' in order for insertions to be checked.");
+	warning("Argument --genome must be one of 'hg19' or 'hg38' in order for insertions to be checked.");
 	ignore.insertions <- TRUE;
+	}
+
+if (is.null(arguments$ref)) {
+	warning("No argument to --ref provided; will not provide fragment scores.");
 	}
 
 # make and set an output directory
@@ -57,11 +64,6 @@ if (!dir.exists(output.dir)) {
 	dir.create(output.dir, recursive = TRUE);
 	}
 
-setwd(output.dir);
-
-
-library(CompareFragmentSize);
-
 ### MAIN ###########################################################################################
 # read in target positions (+ any annotations; ie, Sample or Gene names)
 mutations <- formatTargets(arguments$targets, id = arguments$sample);
@@ -74,25 +76,33 @@ if (nrow(mutations) == 0) {
 	stop('No appropriate mutations available; halting program.');
 	}
 
+# load in fragment score reference (if provided)
+vessies.ref <- NULL;
+if (!is.null(arguments$ref)) {
+	vessies.ref <- as.numeric(read.delim(arguments$ref, header = FALSE)$V1);
+	}
+
+# move to output directory
+setwd(output.dir);
+
 # initiate list to hold variant sizes
 metrics.data <- list();
 
 # loop over each variant
 for (idx in 1:nrow(mutations)) {
 
-	variant <- paste(mutations[idx,c('Chromosome','Start','REF','ALT')], collapse = '_');
-
 	# format fragment data
 	target.reads <- getReadsFromBAM(
 		filePath = arguments$bam,
 		targets = mutations[idx,],
-		dedup = NA
+		dedup = TRUE
 		);
 
 	target.reads <- annotateReads(
 		ga = target.reads,
 		targets = mutations[idx,],
-		refGenome = arguments$ref_type
+		refGenome = arguments$genome,
+		fs_ref = vessies.ref
 		);
 
 	metrics.data[[idx]] <- collectMetrics(
@@ -100,6 +110,8 @@ for (idx in 1:nrow(mutations)) {
 		target = mutations[idx,],
 		verbose = FALSE
 		);
+
+	if (is.na(metrics.data[[idx]]$KS.p)) { next; }
 
 	plotFragmentSizes(
 		fragment.data = target.reads,
