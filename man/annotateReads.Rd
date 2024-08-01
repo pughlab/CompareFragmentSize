@@ -2,14 +2,16 @@
 % Please edit documentation in R/annotateReads.R
 \name{annotateReads}
 \alias{annotateReads}
-\title{Annotate reads as REF or ALT}
+\title{Annotate reads as REF or ALT; adds fragment size and fragment score (if available)}
 \usage{
-annotateReads(ga, targets = NULL, refGenome = "hg38")
+annotateReads(ga, targets = NULL, fs_ref = NULL, refGenome = "hg38")
 }
 \arguments{
 \item{ga}{list containing a GenomicAlignments object (see getReadsFromBAM)}
 
 \item{targets}{data.frame containing target mutations (see formatTargets)}
+
+\item{fs_ref}{vector of fragment scores (ie, from Vessies et al)}
 
 \item{refGenome}{BSgenome to use (required for evaluating insertions; currently supports hg19 and hg38)}
 }

@@ -79,7 +79,7 @@ plotFragmentSizes <- function(fragment.data, target, id = NULL, output.to = 'fil
 	median2 <- median(alt$V1, na.rm = TRUE);
 
 	vaf <- round(target[1,]$VAF,2);
-	p <- format.pvalue(target[1,]$p);
+	p <- format.pvalue(target[1,]$KS.p);
 
 	# Plot cumulative distributions
 	if (-1 == compareVersion(packageDescription('ggplot2')$Version,'3.4.0')) {

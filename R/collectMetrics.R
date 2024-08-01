@@ -41,34 +41,49 @@ collectMetrics <- function(fragment.data, target, verbose = TRUE) {
 		print(paste('N reference reads: ', length(ref.fragments)));
 		print(paste('N variant reads: ', length(alt.fragments)));
 		print(aggregate(isize ~ Allele, fragments, median));
+		if ('FS' %in% colnames(GenomicRanges::mcols(fragments))) {
+			print(aggregate(FS ~ Allele, fragments, median));
+			}
 		}
 
 	output.data <- target[1,];
-	output.data[,c('N.Ref','Median.Ref','N.Alt','Median.Alt','p','VAF','Classification')] <- NA;
+	output.data[,c('Count_WT','Count_VAR','Median_WT','Median_VAR','VAF','KS.p','Classification')] <- NA;
 
 	# summarize fragment sizes
 	if (length(ref.fragments) > 0) {
-		output.data[1,]$N.Ref <- length(ref.fragments);
-		output.data[1,]$Median.Ref <- median(ref.fragments$isize);
+		output.data$Count_WT <- length(ref.fragments);
+		output.data$Median_WT <- median(ref.fragments$isize);
+		if ('FS' %in% colnames(GenomicRanges::mcols(fragments))) {
+			output.data$WTFS <- median(ref.fragments$FS);
+			}
 		}
 
 	if (length(alt.fragments) > 0) {
-		output.data[1,]$N.Alt <- length(alt.fragments);
-		output.data[1,]$Median.Alt <- median(alt.fragments$isize);
+		output.data$Count_VAR <- length(alt.fragments);
+		output.data$Median_VAR <- median(alt.fragments$isize);
+		if ('FS' %in% colnames(GenomicRanges::mcols(fragments))) {
+			output.data$VFS <- median(alt.fragments$FS);
+			}
 		}
 
 	if ( (length(ref.fragments) > 0) & (length(alt.fragments) > 0) ){
-		output.data[1,]$p <- ks.test(
+		output.data$VAF <- output.data$Count_VAR / 
+			sum(output.data[,c('Count_WT','Count_VAR')]);
+
+		output.data$KS.p <- ks.test(
 			alt.fragments$isize,
 			ref.fragments$isize,
-			alternative = 'g')$p.value;
+			alternative = 'greater')$p.value;
 
-		output.data[1,]$VAF <- output.data[1,]$N.Alt / sum(output.data[1,c('N.Ref','N.Alt')]);
+		if ('FS' %in% colnames(GenomicRanges::mcols(fragments))) {
+			output.data$ttest.p <- t.test(
+				alt.fragments$FS,
+				ref.fragments$FS)$p.value;
+			}
 
 		# indicate predicted classification for each variant (somatic [tumour-derived] or 
 		#	non-somatic [CHIP/germline/sequencing artefact])
-		output.data$Classification <- if (output.data[1,]$p < 0.01) { 'somatic';
-			} else if (output.data[1,]$VAF >= 0.38) { 'probable germline';
+		output.data$Classification <- if (output.data$KS.p < 0.01) { 'somatic';
 			} else { 'non-somatic';
 			}
 

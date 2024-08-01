@@ -10,6 +10,7 @@
 #' @param ga list containing a GenomicAlignments object (see getReadsFromBAM)
 #' @param targets data.frame containing target mutations (see formatTargets)
 #' @param refGenome BSgenome to use (required for evaluating insertions; currently supports hg19 and hg38)
+#' @param fs_ref vector of fragment scores (ie, from Vessies et al)
 #' @return list containing original and annotated GenomicAlignments objects
 #' @examples
 #' test.maf.file <- system.file('extdata', 'test_snp_data.maf', package = 'CompareFragmentSize'); 
@@ -18,7 +19,7 @@
 #' target.reads <- getReadsFromBAM(filePath = test.bam.file, targets = mutations[1,]);
 #' fragment.data <- annotateReads(ga = target.reads, targets = mutations[1,], refGenome = 'hg19');
 #' @export
-annotateReads <- function(ga, targets = NULL, refGenome = "hg38") {
+annotateReads <- function(ga, targets = NULL, fs_ref = NULL, refGenome = "hg38") {
 
 	# ensure target is provided
 	if (is.null(targets) || nrow(targets) == 0) {
@@ -134,8 +135,13 @@ annotateReads <- function(ga, targets = NULL, refGenome = "hg38") {
 
 	# add Group, Allele and insert size annotations to fragment data
 	sam$isize <- abs(sam$isize);
+
+	if (!is.null(fs_ref)) {
+		sam$FS <- fs_ref[match(sam$isize, 1:length(fs_ref))];
+		}
+
 	ga$annotated <- GenomicRanges::makeGRangesFromDataFrame(
-		sam[,c('seqnames','strand','start','end','isize','Group','Allele')],
+		sam[,c('seqnames','strand','start','end','isize','FS','Group','Allele')],
 		keep.extra.columns = TRUE
 		);
 

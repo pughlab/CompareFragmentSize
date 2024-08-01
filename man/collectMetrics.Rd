@@ -18,7 +18,7 @@ data.frame of summary metrics
 }
 \description{
 This function returns summary metrics, including counts and median fragment size, and attempts
-to classify the target variant as somatic, germline or non-somatic.
+to classify the target variant as somatic or non-somatic.
 }
 \examples{
 test.maf.file <- system.file('extdata', 'test_snp_data.maf', package = 'CompareFragmentSize'); 

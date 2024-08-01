@@ -1,5 +1,5 @@
-# PughLab CompareFragmentSize (version 0.0.9000)
-This package can be used to compare fragment size of variant- and reference-allele containing reads in a plasma cfDNA BAM file in order to classify variants as somatic (tend to have shorter fragments) or non-somatic (germline if VAF > 38%, CHIP or sequence artefacts).
+# PughLab CompareFragmentSize (version 0.0.10)
+This package can be used to compare fragment size of variant- and reference-allele containing reads in a plasma cfDNA BAM file in order to classify variants as somatic (tend to have shorter fragments) or non-somatic (germline if VAF > 38%, CHIP or sequence artefacts). These functions are adapted from [Vessies et al. (2022)](https://github.com/DCLVessies/Fragmentomics).
 
 ## Installation
 devtools::install_github("pughlab/CompareFragmentSize")
@@ -28,8 +28,8 @@ The included compareVariantFragmentSizes.R can be used to run all target variant
 Rscript compareVariantFragmentSizes.R -b /path/to/sample.bam -o /path/to/output/directory -s Sample1 -t /path/to/targets.maf -r hg38
 ```
 
-| Sample | Hugo_Symbol | Chromosome | Start | End | Variant_Type | REF | ALT | HGVSc | N.Ref | Median.Ref | N.Alt | Median.Alt | p | VAF | Classification |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Sample1 | FANCD2 | chr3 | 10088239 | 10088239 | SNP | G | A | c.1135-25G>A | 2260 | 167 | 372 | 164 | 8x10^-8 | 0.14 | somatic |
+| Sample | Hugo_Symbol | Chromosome | Start | End | Variant_Type | REF | ALT | HGVSc | Count_WT | Median_WT | Count_VAR | Median_VAR | KS.p | VAF | Classification | WTFS | VFS | ttest.p |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Sample1 | FANCD2 | chr3 | 10088239 | 10088239 | SNP | G | A | c.1135-25G>A | 2260 | 167 | 372 | 164 | 8x10^-8 | 0.14 | somatic | NA | NA | NA |
 
 <img src="inst/extdata/fragment_sizes_chr3_10088239_G_A.png" width=40% height=40%>
