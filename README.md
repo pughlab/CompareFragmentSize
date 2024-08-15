@@ -1,4 +1,4 @@
-# PughLab CompareFragmentSize (version 0.0.11)
+# PughLab CompareFragmentSize (version 0.0.12)
 This package can be used to compare fragment size of variant- and reference-allele containing reads in a plasma cfDNA BAM file in order to classify variants as somatic (tend to have shorter fragments) or non-somatic (germline if VAF > 38%, CHIP or sequence artefacts). These functions are adapted from [Vessies et al. (2022)](https://github.com/DCLVessies/Fragmentomics).
 
 ## Installation
@@ -30,6 +30,6 @@ Rscript compareVariantFragmentSizes.R -b /path/to/sample.bam -o /path/to/output/
 
 | Sample | Hugo_Symbol | Chromosome | Start | End | Variant_Type | REF | ALT | HGVSc | Count_WT | Median_WT | Count_VAR | Median_VAR | KS.p | VAF | Classification | WTFS | VFS | ttest.p |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Sample1 | FANCD2 | chr3 | 10088239 | 10088239 | SNP | G | A | c.1135-25G>A | 2260 | 167 | 372 | 164 | 8x10^-8 | 0.14 | somatic | NA | NA | NA |
+| Sample1 | FANCD2 | chr3 | 10088239 | 10088239 | SNP | G | A | c.1135-25G>A | 2260 | 167 | 372 | 164 | 8x10^-8 | 0.14 | somatic | -1.23 | -0.16 | 8x10^-8 |
 
 <img src="inst/extdata/fragment_sizes_chr3_10088239_G_A.png" width=40% height=40%>

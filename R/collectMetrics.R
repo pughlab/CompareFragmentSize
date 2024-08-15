@@ -79,9 +79,12 @@ collectMetrics <- function(fragment.data, target, verbose = TRUE) {
 			alternative = 'greater')$p.value;
 
 		if ('FS' %in% colnames(GenomicRanges::mcols(fragments))) {
-			output.data$ttest.p <- t.test(
-				alt.fragments$FS,
-				ref.fragments$FS)$p.value;
+			output.data$ttest.p <- tryCatch(
+				expr = t.test(
+					alt.fragments$FS,
+					ref.fragments$FS)$p.value,
+				error = function(e) { NA } 
+				);
 			}
 
 		# indicate predicted classification for each variant (somatic [tumour-derived] or 
