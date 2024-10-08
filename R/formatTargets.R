@@ -88,10 +88,17 @@ formatTargets <- function(input, id = NULL) {
 	# indicate the type of variant
 	if (! 'Variant_Type' %in% colnames(input.data)) {
 		input.data$Variant_Type <- apply(input.data[,c('REF','ALT')],1,function(i) {
-			if (nchar(i[1]) > nchar(i[2])) { 'DEL'
-			} else if (nchar(i[1]) < nchar(i[2])) { 'INS'
+			if ((nchar(i[1]) > nchar(i[2])) | (i[2] == '-')) { 'DEL'
+			} else if ((nchar(i[1]) < nchar(i[2])) | (i[1] == '-')) { 'INS'
 			} else { 'SNP' }
 			});
+		}
+
+	if (any('DEL' == input.data$Variant_Type)) {
+		input.data[which(input.data$Variant_Type == 'DEL'),]$Start <- (
+			input.data[which(input.data$Variant_Type == 'DEL'),]$End -
+			nchar(input.data[which(input.data$Variant_Type == 'DEL'),]$REF)
+			);
 		}
 
 	# indicate fields to return

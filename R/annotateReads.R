@@ -86,9 +86,15 @@ annotateReads <- function(ga, targets = NULL, fs_ref = NULL, refGenome = "hg38")
 			}
 
 		# expand the dna sequence
-		dna.seq <- as.character(GenomicAlignments::sequenceLayer(
+		dna.seq <- GenomicAlignments::sequenceLayer(
 			Biostrings::DNAStringSet(sam[i,]$seq),
-			sam[i,]$cigar)[[1]]);
+			sam[i,]$cigar)[[1]];
+
+		if (sam[i,]$strand == '+') {
+			dna.seq <- as.character(dna.seq);
+			} else {
+			dna.seq <- as.character(Biostrings::complement(dna.seq));
+			}
 
 		# how far is it from the beginning of the read and does the allele match?
 		# for deletions:

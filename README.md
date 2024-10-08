@@ -1,4 +1,4 @@
-# PughLab CompareFragmentSize (version 0.0.12)
+# PughLab CompareFragmentSize (version 0.0.13)
 This package can be used to compare fragment size of variant- and reference-allele containing reads in a plasma cfDNA BAM file in order to classify variants as somatic (tend to have shorter fragments) or non-somatic (germline if VAF > 38%, CHIP or sequence artefacts). These functions are adapted from [Vessies et al. (2022)](https://github.com/DCLVessies/Fragmentomics).
 
 ## Installation

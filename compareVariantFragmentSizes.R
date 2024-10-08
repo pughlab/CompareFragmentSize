@@ -4,7 +4,7 @@
 # 	as REF or ALT, performs summary statisitcs for each variant and outputs visualizations.
 
 # Example:
-# Rscript compareVariantFragmentSizes.R -b /path/to/sample.bam -o /path/to/output/directory -s Sample1 -t /path/to/targets.maf -g hg38
+# Rscript compareVariantFragmentSizes.R -b /path/to/sample.bam -o /path/to/output/directory -s Sample1 -t /path/to/targets.maf -r hg38
 
 ### PREPARE SESSION ################################################################################
 # import libraries
@@ -44,7 +44,7 @@ if (is.null(arguments$sample)) {
 	}
 
 ignore.insertions <- FALSE;
-if (!arguments$ref_type %in% c('hg19','hg38')) {
+if (!arguments$genome %in% c('hg19','hg38')) {
 	warning("Argument --genome must be one of 'hg19' or 'hg38' in order for insertions to be checked.");
 	ignore.insertions <- TRUE;
 	}
@@ -97,6 +97,8 @@ for (idx in 1:nrow(mutations)) {
 		targets = mutations[idx,],
 		dedup = TRUE
 		);
+
+	if (length(target.reads$raw) == 0) { next; }
 
 	target.reads <- annotateReads(
 		ga = target.reads,
