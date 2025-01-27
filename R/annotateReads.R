@@ -99,8 +99,8 @@ annotateReads <- function(ga, targets = NULL, fs_ref = NULL, refGenome = "hg38")
 		# how far is it from the beginning of the read and does the allele match?
 		# for deletions:
 		if ('DEL' == targets[1,]$Variant_Type) {
-			pos1 <- targets$Start[1] - sam[i,]$start + 1;
-			pos2 <- targets$Start[1] - sam[i,]$start + alt.size;
+			pos1 <- targets$Start[1] - sam[i,]$start + 1 + 1;
+			pos2 <- targets$Start[1] - sam[i,]$start + alt.size + 1;
 			allele <- substr(dna.seq,pos1,pos2);
 
 			sam[i,]$Group <- if (allele == targets[1,]$REF) {
@@ -142,9 +142,10 @@ annotateReads <- function(ga, targets = NULL, fs_ref = NULL, refGenome = "hg38")
 	# add Group, Allele and insert size annotations to fragment data
 	sam$isize <- abs(sam$isize);
 
+	sam$FS <- NA;
 	if (!is.null(fs_ref)) {
 		sam$FS <- fs_ref[match(sam$isize, 1:length(fs_ref))];
-		}
+		} 
 
 	ga$annotated <- GenomicRanges::makeGRangesFromDataFrame(
 		sam[,c('seqnames','strand','start','end','isize','FS','Group','Allele')],
