@@ -80,7 +80,7 @@ annotateReads <- function(ga, targets = NULL, fs_ref = NULL, refGenome = "hg38")
 			}
 
 		# if the read only contains matches
-		if ('150M' == sam[i,]$cigar) {
+		if ((targets[1,]$Variant_Type != 'SNP') & (paste0(sam[i,]$width,'M') == sam[i,]$cigar)) {
 			sam[i,]$Group <- 'REF';
 			next;
 			}
