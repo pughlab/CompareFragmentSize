@@ -90,11 +90,11 @@ annotateReads <- function(ga, targets = NULL, fs_ref = NULL, refGenome = "hg38")
 			Biostrings::DNAStringSet(sam[i,]$seq),
 			sam[i,]$cigar)[[1]];
 
-		if (sam[i,]$strand == '+') {
+#		if (sam[i,]$strand == '+') {
 			dna.seq <- as.character(dna.seq);
-			} else {
-			dna.seq <- as.character(Biostrings::complement(dna.seq));
-			}
+#			} else {
+#			dna.seq <- as.character(Biostrings::complement(dna.seq));
+#			}
 
 		# how far is it from the beginning of the read and does the allele match?
 		# for deletions:
@@ -108,7 +108,7 @@ annotateReads <- function(ga, targets = NULL, fs_ref = NULL, refGenome = "hg38")
 				'ALT' } else { NA }
 
 			# for SNVs:
-			} else if (alt.size == 1) {
+			} else if ('SNP' == targets[1,]$Variant_Type) {
 			pos1 <- targets$Start[1] - sam[i,]$start + 1;
 			allele <- substr(dna.seq, pos1, pos1);
 
@@ -117,7 +117,7 @@ annotateReads <- function(ga, targets = NULL, fs_ref = NULL, refGenome = "hg38")
 				'ALT' } else { NA }
 
 			# for insertions:
-			} else {
+			} else if ('INS' == targets[1,]$Variant_Type) {
 			dna.seq <- as.character(GenomicAlignments::sequenceLayer(
 				Biostrings::DNAStringSet(sam[i,]$seq),
 				sam[i,]$cigar, to = 'pairwise')[[1]]);
