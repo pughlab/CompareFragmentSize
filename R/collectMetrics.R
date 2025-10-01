@@ -20,7 +20,7 @@
 #' fragment.data <- annotateReads(ga = target.reads, targets = mutations[1,]);
 #' summary.metrics <- collectMetrics(fragment.data, mutations[1,]);
 #' @export
-collectMetrics <- function(fragment.data, target, verbose = TRUE) {
+collectMetrics <- function(fragment.data, target, alpha = 0.01, verbose = TRUE) {
 
 	if ('list' != class(fragment.data)) {
 		stop('fragment.data should be a list output by annotateReads.');
@@ -82,16 +82,24 @@ collectMetrics <- function(fragment.data, target, verbose = TRUE) {
 			output.data$ttest.p <- tryCatch(
 				expr = t.test(
 					alt.fragments$FS,
-					ref.fragments$FS)$p.value,
+					ref.fragments$FS,
+					alternative = 'greater')$p.value,
 				error = function(e) { NA } 
 				);
 			}
 
 		# indicate predicted classification for each variant (somatic [tumour-derived] or 
 		#	non-somatic [CHIP/germline/sequencing artefact])
-		output.data$Classification <- if (output.data$KS.p < 0.01) { 'somatic';
+		output.data$KS.Class <- if (output.data$KS.p < alpha) { 'somatic';
 			} else { 'non-somatic';
 			}
+
+		output.data$FS.Class <- if (output.data$ttest.p < alpha) { 'somatic';
+			} else { 'non-somatic';
+			}
+
+		output.data$Classification <- if (output.data$KS.Class == output.data$FS.Class) {
+			output.data$FS.Class } else { 'inconclusive' }
 
 		if (verbose) {
 			print(paste('Classification:', output.data$Classification[1]));

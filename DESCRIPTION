@@ -1,6 +1,6 @@
 Package: CompareFragmentSize
 Title: Compare fragment size between REF- and ALT- containing reads
-Version: 0.0.16
+Version: 0.0.17
 Authors@R: 
     person(given = "Stephenie",
            family = "Prokopec",
