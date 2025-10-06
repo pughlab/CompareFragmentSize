@@ -57,7 +57,7 @@ collectMetrics <- function(fragment.data, target, alpha = 0.01, verbose = TRUE) 
 		output.data$Count_WT <- length(ref.fragments);
 		output.data$Median_WT <- median(ref.fragments$isize);
 		if ('FS' %in% colnames(GenomicRanges::mcols(fragments))) {
-			output.data$WTFS <- median(ref.fragments$FS);
+			output.data$WTFS <- median(ref.fragments$FS, na.rm = TRUE);
 			}
 		}
 
@@ -65,7 +65,7 @@ collectMetrics <- function(fragment.data, target, alpha = 0.01, verbose = TRUE) 
 		output.data$Count_VAR <- length(alt.fragments);
 		output.data$Median_VAR <- median(alt.fragments$isize);
 		if ('FS' %in% colnames(GenomicRanges::mcols(fragments))) {
-			output.data$VFS <- median(alt.fragments$FS);
+			output.data$VFS <- median(alt.fragments$FS, na.rm = TRUE);
 			}
 		}
 
